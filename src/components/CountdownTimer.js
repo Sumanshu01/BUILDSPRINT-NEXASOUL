@@ -13,14 +13,12 @@ export default function CountdownTimer() {
 
   useEffect(() => {
     setMounted(true);
-    // Target date: 12 days from today
-    const targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + 12);
-    targetDate.setHours(targetDate.getHours() + 8);
+    // Event Date: September 30, 2026, 09:00:00 AM IST
+    const targetDate = new Date('2026-09-30T09:00:00+05:30').getTime();
 
     const updateTimer = () => {
       const now = new Date().getTime();
-      const difference = targetDate.getTime() - now;
+      const difference = targetDate - now;
 
       if (difference > 0) {
         const days = Math.floor(difference / (1000 * 60 * 60 * 24));
@@ -41,32 +39,22 @@ export default function CountdownTimer() {
 
   const formatUnit = (val) => String(val).padStart(2, '0');
 
-  if (!mounted) {
-    return (
-      <div className="countdown-container" id="sprint-countdown">
-        {['DAYS', 'HOURS', 'MINUTES', 'SECONDS'].map((label) => (
-          <div key={label} className="countdown-box">
-            <div className="countdown-num">00</div>
-            <div className="countdown-label">{label}</div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
   const units = [
-    { label: 'DAYS', value: formatUnit(timeLeft.days) },
-    { label: 'HOURS', value: formatUnit(timeLeft.hours) },
-    { label: 'MINUTES', value: formatUnit(timeLeft.minutes) },
-    { label: 'SECONDS', value: formatUnit(timeLeft.seconds) },
+    { label: 'DAYS', value: mounted ? formatUnit(timeLeft.days) : '00' },
+    { label: 'HOURS', value: mounted ? formatUnit(timeLeft.hours) : '00' },
+    { label: 'MINUTES', value: mounted ? formatUnit(timeLeft.minutes) : '00' },
+    { label: 'SECONDS', value: mounted ? formatUnit(timeLeft.seconds) : '00' },
   ];
 
   return (
-    <div className="countdown-container" id="sprint-countdown">
-      {units.map((unit) => (
-        <div key={unit.label} className="countdown-box">
-          <div className="countdown-num">{unit.value}</div>
-          <div className="countdown-label">{unit.label}</div>
+    <div className="countdown-wrapper" id="sprint-countdown">
+      {units.map((unit, index) => (
+        <div key={unit.label} style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+          <div className="countdown-unit">
+            <div className="countdown-number">{unit.value}</div>
+            <div className="countdown-label">{unit.label}</div>
+          </div>
+          {index < units.length - 1 && <div className="countdown-sep">:</div>}
         </div>
       ))}
     </div>
