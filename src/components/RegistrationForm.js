@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { soundManager } from '@/components/SoundEffects';
+import { MISSIONS_DATA } from '@/data/missions';
 import confetti from 'canvas-confetti';
 import { 
   Users, 
@@ -13,11 +14,13 @@ import {
   ShieldCheck, 
   AlertCircle,
   Copy,
-  Check
+  Check,
+  Target
 } from 'lucide-react';
 
-export default function RegistrationForm({ onRegistered }) {
+export default function RegistrationForm({ onRegistered, selectedMission }) {
   const [teamName, setTeamName] = useState('');
+  const [mission, setMission] = useState(selectedMission || 'Mission 01: CURSED CAMPUS — "THE VEIL"');
   const [leader, setLeader] = useState({
     name: '',
     uid: '',
@@ -29,6 +32,12 @@ export default function RegistrationForm({ onRegistered }) {
   const [successData, setSuccessData] = useState(null);
   const [toast, setToast] = useState({ show: false, message: '', isError: false });
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (selectedMission) {
+      setMission(selectedMission);
+    }
+  }, [selectedMission]);
 
   const showToast = (message, isError = false) => {
     setToast({ show: true, message, isError });
@@ -92,6 +101,7 @@ export default function RegistrationForm({ onRegistered }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           teamName: teamName.trim(),
+          mission,
           leader,
           members,
         }),
@@ -112,7 +122,7 @@ export default function RegistrationForm({ onRegistered }) {
           particleCount: 120,
           spread: 85,
           origin: { y: 0.6 },
-          colors: ['#a855f7', '#00d4ff', '#f0abfc', '#38bdf8', '#ffffff'],
+          colors: ['#c084fc', '#38bdf8', '#f0abfc', '#0ea5e9', '#7c3aed'],
         });
         setTimeout(() => {
           confetti({
@@ -120,14 +130,14 @@ export default function RegistrationForm({ onRegistered }) {
             angle: 60,
             spread: 60,
             origin: { x: 0.1, y: 0.7 },
-            colors: ['#a855f7', '#00d4ff'],
+            colors: ['#c084fc', '#38bdf8'],
           });
           confetti({
             particleCount: 80,
             angle: 120,
             spread: 60,
             origin: { x: 0.9, y: 0.7 },
-            colors: ['#00d4ff', '#ffffff'],
+            colors: ['#38bdf8', '#c084fc'],
           });
         }, 300);
       } catch {
@@ -159,6 +169,7 @@ export default function RegistrationForm({ onRegistered }) {
     soundManager.playClick();
     setSuccessData(null);
     setTeamName('');
+    setMission(selectedMission || 'Mission 01: CURSED CAMPUS — "THE VEIL"');
     setLeader({ name: '', uid: '', phone: '', email: '' });
     setMembers([]);
   };
@@ -168,7 +179,7 @@ export default function RegistrationForm({ onRegistered }) {
       {/* Toast Notification */}
       <div className={`toast ${toast.show ? 'show' : ''} ${toast.isError ? 'error' : ''}`}>
         <span className="toast-icon">
-          {toast.isError ? <AlertCircle size={18} color="#f87171" /> : <Sparkles size={18} color="#00d4ff" />}
+          {toast.isError ? <AlertCircle size={18} color="#ef4444" /> : <Sparkles size={18} color="#38bdf8" />}
         </span>
         <span>{toast.message}</span>
       </div>
@@ -177,7 +188,7 @@ export default function RegistrationForm({ onRegistered }) {
         {/* Form Header */}
         <div className="form-header">
           <div className="form-header-icon">
-            <Users size={22} color="#a855f7" />
+            <Users size={22} color="#c084fc" />
           </div>
           <div>
             <div className="form-header-title">SQUAD INVOCATION PROTOCOL</div>
@@ -197,26 +208,27 @@ export default function RegistrationForm({ onRegistered }) {
             </div>
 
             <div style={{
-              background: 'rgba(168, 85, 247, 0.1)',
-              border: '1px solid rgba(168, 85, 247, 0.3)',
-              borderRadius: '8px',
-              padding: '1.25rem 2rem',
+              background: 'rgba(25, 18, 50, 0.7)',
+              border: '1px solid rgba(168, 85, 247, 0.35)',
+              borderRadius: '16px',
+              padding: '1.5rem 2rem',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              gap: '0.5rem',
+              gap: '0.6rem',
               marginTop: '0.5rem',
-              maxWidth: '480px',
+              maxWidth: '520px',
               width: '100%',
+              boxShadow: '0 8px 30px rgba(0, 0, 0, 0.5)',
             }}>
               <div style={{ fontSize: '0.75rem', color: '#94a3b8', letterSpacing: '0.15em', fontFamily: 'var(--font-mono)' }}>
                 ASSIGNED PROTOCOL ID
               </div>
               <div style={{
-                fontSize: '1.5rem',
+                fontSize: '1.6rem',
                 fontFamily: 'var(--font-tech)',
                 fontWeight: 800,
-                color: '#00d4ff',
+                color: '#38bdf8',
                 letterSpacing: '0.1em',
                 display: 'flex',
                 alignItems: 'center',
@@ -227,11 +239,11 @@ export default function RegistrationForm({ onRegistered }) {
                   onClick={copyTeamId}
                   type="button"
                   style={{
-                    background: 'rgba(0, 212, 255, 0.1)',
-                    border: '1px solid rgba(0, 212, 255, 0.3)',
-                    color: '#00d4ff',
+                    background: 'rgba(56, 189, 248, 0.15)',
+                    border: '1px solid rgba(56, 189, 248, 0.4)',
+                    color: '#38bdf8',
                     padding: '0.4rem',
-                    borderRadius: '4px',
+                    borderRadius: '6px',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
@@ -241,9 +253,23 @@ export default function RegistrationForm({ onRegistered }) {
                   {copied ? <Check size={16} color="#4ade80" /> : <Copy size={16} />}
                 </button>
               </div>
-              <div style={{ fontSize: '0.85rem', color: '#e2e8f0', marginTop: '0.25rem' }}>
+              <div style={{ fontSize: '0.9rem', color: '#ffffff', marginTop: '0.25rem' }}>
                 Squad: <strong>{successData.teamName}</strong> ({successData.totalMembers} Member{successData.totalMembers > 1 ? 's' : ''})
               </div>
+              {successData.mission && (
+                <div style={{
+                  fontSize: '0.8rem',
+                  fontFamily: 'var(--font-mono)',
+                  color: '#f0abfc',
+                  background: 'rgba(168, 85, 247, 0.15)',
+                  padding: '0.25rem 0.75rem',
+                  borderRadius: '4px',
+                  border: '1px solid rgba(168, 85, 247, 0.3)',
+                  textAlign: 'center',
+                }}>
+                  Target: {successData.mission}
+                </div>
+              )}
               <div style={{ fontSize: '0.65rem', color: '#a855f7', letterSpacing: '0.1em', fontFamily: 'var(--font-mono)' }}>
                 Storage: {successData.source === 'neon_database' ? 'Neon Serverless Postgres' : 'Resilient In-Memory Buffer'}
               </div>
@@ -258,19 +284,11 @@ export default function RegistrationForm({ onRegistered }) {
               <button
                 type="button"
                 onClick={resetForm}
-                className="btn-secondary"
-                style={{ padding: '0.75rem 1.75rem' }}
+                className="btn-primary"
+                style={{ padding: '0.75rem 2rem' }}
               >
                 Register Another Squad
               </button>
-              <a
-                href="#teams"
-                className="btn-primary"
-                style={{ padding: '0.75rem 1.75rem' }}
-                onClick={() => soundManager.playClick()}
-              >
-                View Registered Squads
-              </a>
             </div>
           </div>
         ) : (
@@ -278,12 +296,12 @@ export default function RegistrationForm({ onRegistered }) {
           <form onSubmit={handleSubmit} className="form-body">
             {/* Squad Identity */}
             <div className="form-section-label">
-              <span>01. SQUAD IDENTITY</span>
+              <span>01. SQUAD IDENTITY &amp; TARGET MISSION</span>
               <div className="label-line" />
             </div>
 
             <div className="form-grid">
-              <div className="form-group full">
+              <div className="form-group">
                 <label className="form-label" htmlFor="reg-team-name">
                   SQUAD / TEAM NAME <span>*</span>
                 </label>
@@ -296,6 +314,25 @@ export default function RegistrationForm({ onRegistered }) {
                   value={teamName}
                   onChange={(e) => setTeamName(e.target.value)}
                 />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label" htmlFor="reg-mission">
+                  TARGET PROBLEM STATEMENT / MISSION <span>*</span>
+                </label>
+                <select
+                  id="reg-mission"
+                  className="form-input"
+                  value={mission}
+                  onChange={(e) => setMission(e.target.value)}
+                  style={{ cursor: 'pointer', background: 'rgba(25, 18, 50, 0.95)', color: '#ffffff' }}
+                >
+                  {MISSIONS_DATA.map((m) => (
+                    <option key={m.id} value={m.title}>
+                      Mission {m.number}: {m.title} [{m.threatLevel}]
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 

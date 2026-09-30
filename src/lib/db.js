@@ -36,9 +36,15 @@ export async function initDb() {
         members JSONB NOT NULL,
         total_members INT NOT NULL,
         cursed_grade VARCHAR(50) DEFAULT 'Special Grade',
+        mission VARCHAR(255) DEFAULT 'Mission 01: The Veil',
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
     `;
+    // Ensure mission column exists if table was created previously
+    try {
+      await sql`ALTER TABLE nexasoul_teams ADD COLUMN IF NOT EXISTS mission VARCHAR(255);`;
+    } catch {}
+
     console.log('[Neon DB] Table nexasoul_teams verified/created successfully.');
     return true;
   } catch (error) {
@@ -50,8 +56,9 @@ export async function initDb() {
 /**
  * Register a new squad into Neon database
  */
-export async function registerTeam({ teamName, leader, members }) {
+export async function registerTeam({ teamName, mission, leader, members }) {
   const totalMembers = 1 + (members?.length || 0);
+  const chosenMission = mission || 'Mission 01: The Veil';
   const sql = getDb();
 
   if (sql) {
@@ -68,7 +75,8 @@ export async function registerTeam({ teamName, leader, members }) {
           leader_phone,
           leader_email,
           members,
-          total_members
+          total_members,
+          mission
         ) VALUES (
           ${teamName},
           ${leader.name},
@@ -76,9 +84,10 @@ export async function registerTeam({ teamName, leader, members }) {
           ${leader.phone},
           ${leader.email},
           ${JSON.stringify(members || [])}::jsonb,
-          ${totalMembers}
+          ${totalMembers},
+          ${chosenMission}
         )
-        RETURNING id, team_name, created_at;
+        RETURNING id, team_name, mission, created_at;
       `;
 
       return {
@@ -87,6 +96,7 @@ export async function registerTeam({ teamName, leader, members }) {
         teamId: result[0]?.id ? `TEAM-${result[0].id}` : `TEAM-${Date.now()}`,
         numericId: result[0]?.id,
         teamName: result[0]?.team_name,
+        mission: result[0]?.mission || chosenMission,
         createdAt: result[0]?.created_at,
         totalMembers,
       };
@@ -107,6 +117,7 @@ export async function registerTeam({ teamName, leader, members }) {
     members: members || [],
     total_members: totalMembers,
     cursed_grade: 'Special Grade',
+    mission: chosenMission,
     created_at: new Date().toISOString(),
   };
   memoryTeams.unshift(record);
@@ -117,6 +128,7 @@ export async function registerTeam({ teamName, leader, members }) {
     note: 'Database URL not set; stored locally. Add DATABASE_URL to .env.local for live Neon persistence.',
     teamId: fallbackId,
     teamName,
+    mission: chosenMission,
     createdAt: record.created_at,
     totalMembers,
   };
@@ -138,6 +150,7 @@ export async function getTeams() {
           leader_email,
           total_members,
           cursed_grade,
+          COALESCE(mission, 'Mission 01: The Veil') as mission,
           created_at
         FROM nexasoul_teams
         ORDER BY created_at DESC;

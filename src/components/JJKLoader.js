@@ -54,7 +54,7 @@ export default function JJKLoader({ onComplete }) {
         fontFamily: "'Cinzel', serif",
         fontSize: '1.6rem',
         fontWeight: 900,
-        background: 'linear-gradient(135deg, #ffffff, #a855f7, #00d4ff)',
+        background: 'linear-gradient(135deg, #1e1b4b, #8b5cf6, #0284c7)',
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
         backgroundClip: 'text',
@@ -66,7 +66,7 @@ export default function JJKLoader({ onComplete }) {
       <div style={{
         fontFamily: "'Orbitron', sans-serif",
         fontSize: '0.65rem',
-        color: '#a855f7',
+        color: '#6d28d9',
         letterSpacing: '0.4em',
         marginBottom: '1.5rem',
       }}>
@@ -87,7 +87,7 @@ export default function JJKLoader({ onComplete }) {
       <div style={{
         fontFamily: "'Share Tech Mono', monospace",
         fontSize: '0.6rem',
-        color: 'rgba(168,85,247,0.6)',
+        color: 'rgba(109, 40, 217, 0.5)',
         marginTop: '0.5rem',
         letterSpacing: '0.1em',
       }}>

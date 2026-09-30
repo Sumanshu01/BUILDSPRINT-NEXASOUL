@@ -4,7 +4,7 @@ import { registerTeam } from '@/lib/db';
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { teamName, leader, members } = body || {};
+    const { teamName, mission, leader, members } = body || {};
 
     // Validate Team Name
     if (!teamName || typeof teamName !== 'string' || !teamName.trim()) {
@@ -77,6 +77,7 @@ export async function POST(request) {
     // Execute registration with Neon DB (or resilient in-memory fallback)
     const result = await registerTeam({
       teamName: teamName.trim(),
+      mission: (mission || '').trim() || 'Mission 01: The Veil',
       leader: {
         name: leaderName.trim(),
         uid: leaderUid.trim(),
@@ -92,6 +93,7 @@ export async function POST(request) {
         message: 'Squad domain initialized successfully!',
         teamId: result.teamId,
         teamName: result.teamName,
+        mission: result.mission,
         createdAt: result.createdAt,
         totalMembers: result.totalMembers,
         source: result.source,

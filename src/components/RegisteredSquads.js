@@ -202,6 +202,29 @@ export default function RegisteredSquads({ refreshTrigger }) {
                 Leader: <strong style={{ color: '#e2e8f0' }}>{t.leader_name}</strong>
               </div>
 
+              {t.mission && (
+                <div style={{
+                  fontSize: '0.72rem',
+                  fontFamily: 'var(--font-mono)',
+                  color: '#38bdf8',
+                  background: 'rgba(2, 132, 199, 0.12)',
+                  border: '1px solid rgba(2, 132, 199, 0.35)',
+                  padding: '0.35rem 0.6rem',
+                  borderRadius: '4px',
+                  marginTop: '0.5rem',
+                  marginBottom: '0.25rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  lineHeight: 1.3,
+                }}>
+                  <span style={{ color: '#f43f5e', fontWeight: 'bold' }}>⚔️</span>
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {t.mission}
+                  </span>
+                </div>
+              )}
+
               <div style={{
                 display: 'flex',
                 alignItems: 'center',

@@ -12,9 +12,9 @@ export default function CursedParticles() {
     const createParticle = () => {
       const p = document.createElement('div');
       p.className = 'particle';
-      const size = Math.random() * 4 + 1;
+      const size = Math.random() * 5 + 2;
       const x = Math.random() * 100;
-      const duration = Math.random() * 8 + 6;
+      const duration = Math.random() * 10 + 8;
       const delay = Math.random() * 5;
 
       p.style.cssText = `
@@ -33,12 +33,12 @@ export default function CursedParticles() {
     };
 
     // Create initial batch
-    for (let i = 0; i < 30; i++) {
-      setTimeout(createParticle, i * 200);
+    for (let i = 0; i < 25; i++) {
+      setTimeout(createParticle, i * 250);
     }
 
-    // Continuous spawning
-    const interval = setInterval(createParticle, 400);
+    // Continuous spawning — slightly slower rate for light theme elegance
+    const interval = setInterval(createParticle, 500);
     return () => clearInterval(interval);
   }, []);
 
